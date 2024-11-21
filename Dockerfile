@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libgpgme11-dev \
     squashfs-tools \
     libseccomp-dev \
+    libsqlite3-dev \
     pkg-config \
     git-all \
     wget \
@@ -25,7 +26,7 @@ RUN apt-get update && apt-get install -y \
     cd /GW_Python/Python-3.8.10 && \
     make && \
     make install && \
-    /GW_Python/bin/pip3 install numpy scipy scikit-learn matplotlib tqdm sympy setuptools pandas pyyaml && \
+    /GW_Python/bin/pip3 install numpy scipy scikit-learn matplotlib tqdm sympy setuptools pandas pyyaml  && \
     /GW_Python/bin/pip3 install scSpectra && \
     /GW_Python/bin/pip3 install dill && \
     chmod -R 777 /GW_Python
