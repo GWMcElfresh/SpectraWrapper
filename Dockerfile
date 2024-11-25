@@ -33,3 +33,5 @@ RUN apt-get update && apt-get install -y \
 
 ENV NUMBA_CACHE_DIR=/work/numba_cache
 ENV MPLCONFIGDIR=/work/mpl_cache
+
+ENTRYPOINT ["/bin/bash"]
