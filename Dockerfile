@@ -31,6 +31,10 @@ RUN apt-get update && apt-get install -y \
     /GW_Python/bin/pip3 install dill && \
     chmod -R 777 /GW_Python
 
+RUN apt install r-base r-base-dev -y && \
+    Rscript -e "install.packages('Seurat')" && \
+    Rscript -e "install.packages('data.table')"
+
 ENV NUMBA_CACHE_DIR=/work/numba_cache
 ENV MPLCONFIGDIR=/work/mpl_cache
 
