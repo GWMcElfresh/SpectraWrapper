@@ -20,10 +20,10 @@ RUN apt-get update && apt-get install -y \
     mkdir /GW_Python && \
     cd /GW_Python && \
     wget https://github.com/python/cpython/archive/refs/tags/v3.8.10.tar.gz && \
-    tar -zxvf Python-3.8.10.tgz && \
-    cd Python-3.8.10 && \
+    tar -zxvf v3.8.10.tar.gz && \
+    cd v3.8.10 && \
     ./configure --prefix=/GW_Python && \ 
-    cd /GW_Python/Python-3.8.10 && \
+    cd /GW_Python/v3.8.10 && \
     make && \
     make install && \
     /GW_Python/bin/pip3 install numpy scipy scikit-learn matplotlib tqdm sympy setuptools pandas pyyaml  && \
