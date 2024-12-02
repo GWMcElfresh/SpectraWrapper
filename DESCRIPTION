@@ -1,0 +1,9 @@
+Package: spectra_image
+Title: R wrapper around Spectra
+Version: 0.0.0.9000
+Description: This package hosts a docker image to run the Spectra software
+    for single cell RNASeq signature discovery.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
