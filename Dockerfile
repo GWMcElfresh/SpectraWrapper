@@ -26,9 +26,9 @@ RUN apt-get update && apt-get install -y \
     cd /GW_Python/cpython-3.8.10 && \
     make && \
     make install && \
-    /GW_Python/bin/pip3 install numpy scipy scikit-learn scikit-misc matplotlib tqdm sympy setuptools pandas pyyaml  && \
-    /GW_Python/bin/pip3 install scSpectra && \
-    /GW_Python/bin/pip3 install dill && \
+    /GW_Python/bin/pip3 --no-cache-dir install numpy scipy scikit-learn scikit-misc matplotlib tqdm sympy setuptools pandas pyyaml  && \
+    /GW_Python/bin/pip3 --no-cache-dir install scSpectra && \
+    /GW_Python/bin/pip3 --no-cache-dir install dill && \
     chmod -R 777 /GW_Python
 
 RUN apt install r-base r-base-dev -y && \
