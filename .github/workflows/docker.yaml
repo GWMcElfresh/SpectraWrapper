@@ -23,7 +23,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/gwmcelfresh/spectraWrapper
+          images: ghcr.io/gwmcelfresh/spectrawrapper
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -52,5 +52,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/gwmcelfresh/spectraWrapper:latest
-            ghcr.io/gwmcelfresh/spectraWrapper:nightly
+            ghcr.io/gwmcelfresh/spectrawrapper:latest
+            ghcr.io/gwmcelfresh/spectrawrapper:nightly
