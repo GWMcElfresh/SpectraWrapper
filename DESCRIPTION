@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 Package: SpectraWrapper
-=======
-Package: spectra_image
->>>>>>> 18a3608 (add R package skeleton)
 Title: R wrapper around Spectra
 Version: 0.0.0.9000
 Description: This package hosts a docker image to run the Spectra software
