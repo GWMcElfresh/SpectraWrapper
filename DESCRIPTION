@@ -1,6 +1,8 @@
 Package: SpectraWrapper
 Title: R wrapper around Spectra
 Version: 0.0.0.9000
+Author: Bimber lab
+Maintainer: The package maintainer <mcelfreg@ohsu.edu>
 Description: This package hosts a docker image to run the Spectra software
     for single cell RNASeq signature discovery.
 License: GPL (>= 3)
