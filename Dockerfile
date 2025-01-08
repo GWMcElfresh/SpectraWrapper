@@ -33,7 +33,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt install r-base r-base-dev -y && \
     Rscript -e "install.packages('Seurat')" && \
-    Rscript -e "install.packages('data.table')"
+    Rscript -e "install.packages('data.table')" && \
+    R CMD build . && \
+	   R CMD INSTALL --build *.tar.gz && \
+	   rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
 
 ENV NUMBA_CACHE_DIR=/work/numba_cache
 ENV MPLCONFIGDIR=/work/mpl_cache
