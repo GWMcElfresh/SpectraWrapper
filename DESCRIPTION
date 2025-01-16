@@ -15,5 +15,9 @@ Imports:
     Seurat,
     SeuratObject,
     data.table
+Suggests:
+    devtools
+Remotes:
+    bimberlab/RIRA
 Collate: 
     'SpectraWrapper.R'
