@@ -1,3 +1,11 @@
+
+utils::globalVariables(
+  names = c("V1"),
+  package = 'SpectraWrapper',
+  add = TRUE
+)
+
+
 #' @title RunSpectra
 #' @description Wrapper function for the Spectra package
 #' @param seuratObj Input Seurat object
@@ -5,6 +13,10 @@
 #' @param assayName Assay used for generating Ann Data
 #' @param inputJSONfile Input Seurat object
 #' @param immportfile Input Seurat object
+#' @importFrom reticulate py_exe
+#' @importFrom readr read_file write_file
+#' @importFrom jsonlite read_json write_json
+#' @export
 
 RunSpectra <- function(seuratObj, seuratToAdataDir, assayName, inputJSONfile, immportfile){
 
@@ -17,6 +29,7 @@ RunSpectra <- function(seuratObj, seuratToAdataDir, assayName, inputJSONfile, im
   ProduceGenesetJSONfile(inputJSONfile, immportfile, genesets_json)
 
   #copy run_Spectra.py in inst/scripts and supply custom arguments
+  #TODO: this isn't in cellmembrane
   str <- readr::read_file(system.file("scripts/run_Spectra.py", package = "CellMembrane"))
   script <- tempfile()
   readr::write_file(str, script)
@@ -43,6 +56,11 @@ RunSpectra <- function(seuratObj, seuratToAdataDir, assayName, inputJSONfile, im
 #' @param seuratToAdataDir The local path to write the output files.
 #' @param assayName The name of the gene expression data assay.
 #' @description A wrapper function to prepare a Seurat object for Conga.
+#' @importFrom Seurat FindVariableFeatures GetAssayData VariableFeatures
+#' @importFrom DropletUtils write10xCounts
+#' @importFrom R.utils getAbsolutePath
+#' @importFrom data.table fwrite
+#' @importFrom utils write.table
 #' @export
 SeuratToAData <- function(seuratObj,
                           seuratToAdataDir,
@@ -51,7 +69,7 @@ SeuratToAData <- function(seuratObj,
     dir.create(seuratToAdataDir, recursive = T)
   }
   seuratObj <- Seurat::FindVariableFeatures(seuratObj)
-  write.table(Seurat::VariableFeatures(seuratObj),
+  utils::write.table(Seurat::VariableFeatures(seuratObj),
               R.utils::getAbsolutePath(paste0(seuratToAdataDir, "/varfeats.csv"),
                                        mustWork = FALSE), row.names = FALSE, col.names = FALSE)
 
@@ -64,11 +82,19 @@ SeuratToAData <- function(seuratObj,
 
 }
 
+#' @title ProduceGenesetJSONfile
+#' @description A helper function to prepare a gene-set JSON file compatible with Spectra.
+#' @param spectraDefaultGeneSets The path to the default spectra library.
+#' @param immportGeneSetsPath The path to the RDS file containing the ImmPort gene sets.
+#' @param outputpath The path to the output JSON file, which will be provided to Spectra.
+#' @importFrom jsonlite read_json write_json
+#' @importFrom RIRA ListGeneSets GetGeneSet
+#' @export
 
-ProduceGenesetJSONfile <- function(inputpath, inputpath2, outputpath){
+ProduceGenesetJSONfile <- function(spectraDefaultGeneSets, immportGeneSetsPath, outputpath){
   # read in gene sets
-  jsonin <- jsonlite::read_json(inputpath, simplifyVector = TRUE)
-  immport <- readRDS(inputpath2)
+  jsonin <- jsonlite::read_json(spectraDefaultGeneSets, simplifyVector = TRUE)
+  immport <- readRDS(immportGeneSetsPath)
   genesets <- RIRA::ListGeneSets()
 
   geneset_auto <- list()
@@ -79,44 +105,77 @@ ProduceGenesetJSONfile <- function(inputpath, inputpath2, outputpath){
     geneset_auto$global[[genesets[i]]] <- RIRA::GetGeneSet(genesets[i])
   }
   for (i in 1:length(immport)){
-    geneset_auto$global[[names(import[i])]] <- immport[[i]]
+    geneset_auto$global[[names(immport[i])]] <- immport[[i]]
   }
   jsonlite::write_json(geneset_auto, outputpath)
 }
 
+#' @title SpectraToSeuratMetadata
+#' @description A helper function to add Spectra results to a Seurat object as metadata.
+#' @param seuratObj The Seurat object to which to add the Spectra results.
+#' @param cellresults_file The path to the Spectra cell scores file.
+#' @param plotComponents Boolean controlling whether to plot the Spectra components.
+#' @importFrom Seurat AddMetaData FeaturePlot
+#' @importFrom ggplot2 scale_colour_gradientn
+#' @export
+
 SpectraToSeuratMetadata <- function(seuratObj, cellresults_file, plotComponents = TRUE){
   # Note: this adds NAs for missing cells. We could in theory change this to zeros if NAs are a problem.
-  SpectraScores <- data.table::fread(cellresults_file) |> as.data.frame()
+  SpectraScores <- data.table::fread(cellresults_file) |>
+    as.data.frame()
   rownames(SpectraScores) <- SpectraScores$V1
-  SpectraScores <- SpectraScores |> select(-"V1")
+  SpectraScores <- SpectraScores |>
+    dplyr::select(-"V1")
   colnames(SpectraScores) <- paste0('Spectra_', 1:ncol(SpectraScores))
-
   for (cmp in  colnames(SpectraScores)){
     seuratObj <- Seurat::AddMetaData(seuratObj, SpectraScores[,cmp], col.name = cmp)
     if (plotComponents){
-      print(Seurat::FeaturePlot(seuratObj, features = cmp, order = T) & ggplot2::scale_colour_gradientn(colours = c('navy', 'dodgerblue', 'white', 'gold', 'red')))
+      print(Seurat::FeaturePlot(seuratObj, features = cmp, order = T) +
+              ggplot2::scale_colour_gradientn(colours = c('navy', 'dodgerblue', 'white', 'gold', 'red')))
     }
   }
   return(seuratObj)
 }
 
-SpectraToSeuratReduction <- function(seuratObj, seuratToAdataDir, assayName = 'RNA', reduction.name = 'spectra', reduction.key = 'Spectra_') {
+#' @title SpectraToSeuratReduction
+#' @description A helper function to add Spectra results to a Seurat object as a reduction.
+#' @param seuratObj The Seurat object to which to add the Spectra results.
+#' @param seuratToAdataDir Intermediate directory containing the Spectra results.
+#' @param assayName The name of the gene expression data assay.
+#' @param reduction.name The name of the reduction to add to the Seurat object.
+#' @param reduction.key The key to use for the reduction.
+#' @importFrom Seurat CreateDimReducObject
+#' @importFrom data.table fread
+#' @importFrom jsonlite read_json
+#' @importFrom dplyr select
+#' @importFrom utils head
+#' @export
+
+SpectraToSeuratReduction <- function(seuratObj,
+                                     seuratToAdataDir,
+                                     assayName = 'RNA',
+                                     reduction.name = 'spectra',
+                                     reduction.key = 'Spectra_') {
   SpectraScores <- data.table::fread(paste0(seuratToAdataDir, "/SPECTRA_cell_scores.csv"), header = T) |> as.data.frame()
   rownames(SpectraScores) <- SpectraScores$V1
-  SpectraScores <- SpectraScores |> select(-"V1")
+  SpectraScores <- SpectraScores |>
+    dplyr::select(-"V1")
   colnames(SpectraScores) <- paste0('Spectra_', colnames(SpectraScores))
 
   geneweights <- data.table::fread(paste0(seuratToAdataDir, "/geneweights.csv"), header = T) |> as.data.frame()
   rownames(geneweights) <- geneweights$V1
-  geneweights <- geneweights |> select(-V1)
+  geneweights <- geneweights |>
+    dplyr::select(-V1)
 
   overlap <- data.table::fread(paste0(seuratToAdataDir, "/SPECTRA_overlap.csv"), header = T) |> as.data.frame()
   rownames(overlap) <- overlap$V1
-  overlap <- overlap |> select(-V1)
+  overlap <- overlap |>
+    dplyr::select(-V1)
 
   markers <- data.table::fread(paste0(seuratToAdataDir, "/SPECTRA_markers.csv"), header = T) |> as.data.frame()
   rownames(markers) <- markers$V1
-  markers <- markers |> select(-V1)
+  markers <- markers |>
+    dplyr::select(-V1)
 
   jsonin <- jsonlite::read_json(paste0(seuratToAdataDir,"/SPECTRA_L.json"), simplifyVector = TRUE)
 
@@ -126,7 +185,7 @@ SpectraToSeuratReduction <- function(seuratObj, seuratToAdataDir, assayName = 'R
   # Note: since SDA could drop cells, add back in the missing cells with zeros
   extraCells <- setdiff(rownames(embeddings), colnames(seuratObj))
   if (length(extraCells) > 0) {
-    stop(paste0('There were ', length(extraCells), ' with data in the Spectra results but not present in the seurat object.  Top barcodes: ', paste0(head(extraCells), collapse = ',')))
+    stop(paste0('There were ', length(extraCells), ' with data in the Spectra results but not present in the seurat object.  Top barcodes: ', paste0(utils::head(extraCells), collapse = ',')))
   }
 
   missingCells <- setdiff(colnames(seuratObj), rownames(embeddings))
