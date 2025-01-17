@@ -4,14 +4,14 @@
 \alias{ProduceGenesetJSONfile}
 \title{ProduceGenesetJSONfile}
 \usage{
-ProduceGenesetJSONfile(spectraDefaultGeneSets, immportGeneSets, outputpath)
+ProduceGenesetJSONfile(spectraDefaultGeneSets, immportGeneSetsPath, outputpath)
 }
 \arguments{
 \item{spectraDefaultGeneSets}{The path to the default spectra library.}
 
-\item{outputpath}{The path to the output JSON file, which will be provided to Spectra.}
+\item{immportGeneSetsPath}{The path to the RDS file containing the ImmPort gene sets.}
 
-\item{immportPath}{The path to the RDS file containing the ImmPort gene sets.}
+\item{outputpath}{The path to the output JSON file, which will be provided to Spectra.}
 }
 \description{
 A helper function to prepare a gene-set JSON file compatible with Spectra.
