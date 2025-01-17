@@ -5,8 +5,10 @@ ARG GH_PAT='NOT_SET'
 
 RUN apt-get update && apt-get install -y \
     build-essential \
+    libcurl4-openssl-dev \
     libssl-dev \
     uuid-dev \
+    libxml2-dev \
     libgpgme11-dev \
     squashfs-tools \
     libseccomp-dev \
@@ -37,7 +39,7 @@ RUN apt install r-base r-base-dev -y && \
         echo 'Setting GH_PAT'; \
         export GITHUB_PAT="${GITHUB_TOKEN}"; \
     fi && \
-    Rscript -e "install.packages(c('Seurat', 'SeuratObject', 'data.table', 'jsonlite', 'readr', 'BiocManager'))" && \
+    Rscript -e "install.packages(c('devtools', 'Seurat', 'SeuratObject', 'data.table', 'jsonlite', 'readr', 'BiocManager'))" && \
     Rscript -e "BiocManager::install('DropletUtils')" && \
     Rscript -e "devtools::install_github(repo = 'bimberlab/RIRA', ref = 'master', dependencies = TRUE, upgrade = 'always')" && \
     R CMD build . && \
