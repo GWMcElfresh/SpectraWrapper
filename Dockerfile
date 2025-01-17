@@ -1,7 +1,8 @@
 FROM ghcr.io/apptainer/apptainer:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
- 
+ARG GH_PAT='NOT_SET'
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     libssl-dev \
@@ -22,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     wget https://github.com/python/cpython/archive/refs/tags/v3.8.10.tar.gz && \
     tar -zxvf v3.8.10.tar.gz && \
     cd cpython-3.8.10 && \
-    ./configure --prefix=/GW_Python && \ 
+    ./configure --prefix=/GW_Python && \
     cd /GW_Python/cpython-3.8.10 && \
     make && \
     make install && \
@@ -32,11 +33,13 @@ RUN apt-get update && apt-get install -y \
     chmod -R 777 /GW_Python
 
 RUN apt install r-base r-base-dev -y && \
-    Rscript -e "install.packages('Seurat')" && \
-    Rscript -e "install.packages('data.table')" && \
+    if [ "${GH_PAT}" != 'NOT_SET' ];then echo 'Setting GITHUB_PAT'; export GITHUB_PAT="${GITHUB_TOKEN}";fi \
+    Rscript -e "install.packages('Seurat', 'SeuratObject', 'data.table', 'jsonlite', 'readr', 'BiocManager')" && \
+    Rscript -e "BiocManager::install('DropletUtils')" && \
+    Rscript -e "devtools::install_github(repo = 'bimberlab/RIRA', ref = 'master', dependencies = TRUE, upgrade = 'always')"
     R CMD build . && \
-	   R CMD INSTALL --build *.tar.gz && \
-	   rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
+	  R CMD INSTALL --build *.tar.gz && \
+	  rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
 
 ENV NUMBA_CACHE_DIR=/work/numba_cache
 ENV MPLCONFIGDIR=/work/mpl_cache

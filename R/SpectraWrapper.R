@@ -5,6 +5,10 @@
 #' @param assayName Assay used for generating Ann Data
 #' @param inputJSONfile Input Seurat object
 #' @param immportfile Input Seurat object
+#' @importFrom reticulate py_exe
+#' @importFrom readr read_file write_file
+#' @importFrom jsonlite read_json write_json
+#' @export
 
 RunSpectra <- function(seuratObj, seuratToAdataDir, assayName, inputJSONfile, immportfile){
 
@@ -17,6 +21,7 @@ RunSpectra <- function(seuratObj, seuratToAdataDir, assayName, inputJSONfile, im
   ProduceGenesetJSONfile(inputJSONfile, immportfile, genesets_json)
 
   #copy run_Spectra.py in inst/scripts and supply custom arguments
+  #TODO: this isn't in cellmembrane
   str <- readr::read_file(system.file("scripts/run_Spectra.py", package = "CellMembrane"))
   script <- tempfile()
   readr::write_file(str, script)
@@ -43,6 +48,8 @@ RunSpectra <- function(seuratObj, seuratToAdataDir, assayName, inputJSONfile, im
 #' @param seuratToAdataDir The local path to write the output files.
 #' @param assayName The name of the gene expression data assay.
 #' @description A wrapper function to prepare a Seurat object for Conga.
+#' @importFrom Seurat FindVariableFeatures GetAssayData VariableFeatures
+#' @importFrom DropletUtils write10xCounts
 #' @export
 SeuratToAData <- function(seuratObj,
                           seuratToAdataDir,
@@ -64,11 +71,19 @@ SeuratToAData <- function(seuratObj,
 
 }
 
+#' @title ProduceGenesetJSONfile
+#' @description A helper function to prepare a gene-set JSON file compatible with Spectra.
+#' @param spectraDefaultGeneSets The path to the default spectra library.
+#' @param immportPath The path to the RDS file containing the ImmPort gene sets.
+#' @param outputpath The path to the output JSON file, which will be provided to Spectra.
+#' @importFrom jsonlite read_json write_json
+#' @importFrom RIRA ListGeneSets GetGeneSet
+#' @export
 
-ProduceGenesetJSONfile <- function(inputpath, inputpath2, outputpath){
+ProduceGenesetJSONfile <- function(spectraDefaultGeneSets, immportGeneSets, outputpath){
   # read in gene sets
-  jsonin <- jsonlite::read_json(inputpath, simplifyVector = TRUE)
-  immport <- readRDS(inputpath2)
+  jsonin <- jsonlite::read_json(spectraDefaultGeneSets, simplifyVector = TRUE)
+  immport <- readRDS(immportGeneSets)
   genesets <- RIRA::ListGeneSets()
 
   geneset_auto <- list()
@@ -83,6 +98,15 @@ ProduceGenesetJSONfile <- function(inputpath, inputpath2, outputpath){
   }
   jsonlite::write_json(geneset_auto, outputpath)
 }
+
+#' @title SpectraToSeuratMetadata
+#' @description A helper function to add Spectra results to a Seurat object as metadata.
+#' @param seuratObj The Seurat object to which to add the Spectra results.
+#' @param cellresults_file The path to the Spectra cell scores file.
+#' @param plotComponents Boolean controlling whether to plot the Spectra components.
+#' @importFrom Seurat AddMetaData FeaturePlot
+#' @importFrom ggplot2 scale_colour_gradientn
+#' @export
 
 SpectraToSeuratMetadata <- function(seuratObj, cellresults_file, plotComponents = TRUE){
   # Note: this adds NAs for missing cells. We could in theory change this to zeros if NAs are a problem.
@@ -100,7 +124,22 @@ SpectraToSeuratMetadata <- function(seuratObj, cellresults_file, plotComponents 
   return(seuratObj)
 }
 
-SpectraToSeuratReduction <- function(seuratObj, seuratToAdataDir, assayName = 'RNA', reduction.name = 'spectra', reduction.key = 'Spectra_') {
+#' @title SpectraToSeuratReduction
+#' @description A helper function to add Spectra results to a Seurat object as a reduction.
+#' @param seuratObj The Seurat object to which to add the Spectra results.
+#' @param seuratToAdataDir Intermediate directory containing the Spectra results.
+#' @param assayName The name of the gene expression data assay.
+#' @param reduction.name The name of the reduction to add to the Seurat object.
+#' @param reduction.key The key to use for the reduction.
+#' @importFrom Seurat CreateDimReducObject
+#' @importFrom data.table fread
+#' @export
+
+SpectraToSeuratReduction <- function(seuratObj,
+                                     seuratToAdataDir,
+                                     assayName = 'RNA',
+                                     reduction.name = 'spectra',
+                                     reduction.key = 'Spectra_') {
   SpectraScores <- data.table::fread(paste0(seuratToAdataDir, "/SPECTRA_cell_scores.csv"), header = T) |> as.data.frame()
   rownames(SpectraScores) <- SpectraScores$V1
   SpectraScores <- SpectraScores |> select(-"V1")

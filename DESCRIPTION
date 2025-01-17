@@ -14,7 +14,10 @@ Depends:
 Imports:
     Seurat,
     SeuratObject,
-    data.table
+    data.table, 
+    jsonlite,
+    readr,
+    DropletUtils
 Suggests:
     devtools
 Remotes:
