@@ -36,7 +36,7 @@ RUN apt install r-base r-base-dev -y && \
     if [ "${GH_PAT}" != 'NOT_SET' ];then echo 'Setting GITHUB_PAT'; export GITHUB_PAT="${GITHUB_TOKEN}";fi \
     Rscript -e "install.packages('Seurat', 'SeuratObject', 'data.table', 'jsonlite', 'readr', 'BiocManager')" && \
     Rscript -e "BiocManager::install('DropletUtils')" && \
-    Rscript -e "devtools::install_github(repo = 'bimberlab/RIRA', ref = 'master', dependencies = TRUE, upgrade = 'always')"
+    Rscript -e "devtools::install_github(repo = 'bimberlab/RIRA', ref = 'master', dependencies = TRUE, upgrade = 'always')" && \
     R CMD build . && \
 	  R CMD INSTALL --build *.tar.gz && \
 	  rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
