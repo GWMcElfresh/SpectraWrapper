@@ -20,6 +20,8 @@ RUN apt-get update && apt-get install -y \
     libbz2-dev \
     zlib1g-dev \
     python3-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
     libffi-dev && \
     mkdir /GW_Python && \
     cd /GW_Python && \
