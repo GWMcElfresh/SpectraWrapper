@@ -1,4 +1,4 @@
-FROM ghcr.io/apptainer/apptainer:latest
+FROM rocker/r-base:4.4
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG GH_PAT='NOT_SET'
