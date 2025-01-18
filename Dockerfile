@@ -1,4 +1,4 @@
-FROM rocker/r-base:4.4
+FROM rocker/r-base:4.4.2
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG GH_PAT='NOT_SET'
