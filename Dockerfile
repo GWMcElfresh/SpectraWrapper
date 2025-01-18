@@ -46,7 +46,7 @@ RUN apt-get update && apt-get install -y r-base r-base-dev && \
         echo 'Setting GH_PAT'; \
         export GITHUB_PAT="${GITHUB_TOKEN}"; \
     fi && \
-    Rscript -e "install.packages('Matrix', repos='http://cran.us.r-project.org')" && \
+    Rscript -e "install.packages('Matrix', repos='http://cran.us.r-project.org', version='1.6.4')" && \
     Rscript -e "install.packages(c('devtools', 'remotes', 'Seurat', 'SeuratObject', 'data.table', 'jsonlite', 'readr', 'BiocManager'))" && \
     Rscript -e "BiocManager::install('DropletUtils', ask = FALSE, upgrade = 'always')" && \
     Rscript -e "remotes::install_github(repo = 'bimberlab/RIRA', ref = 'master', dependencies = TRUE, upgrade = 'always')" && \
