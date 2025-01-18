@@ -13,16 +13,20 @@ RUN apt-get update && apt-get install -y \
     squashfs-tools \
     libseccomp-dev \
     libsqlite3-dev \
-    libfontconfig1-dev \
     pkg-config \
     git-all \
     wget \
     libbz2-dev \
     zlib1g-dev \
     python3-dev \
+    libffi-dev \
+    libfontconfig1-dev \
     libharfbuzz-dev \
     libfribidi-dev \
-    libffi-dev && \
+    libfreetype6-dev \
+    libpng-dev \
+    libtiff5-dev \
+    libjpeg-dev && \
     mkdir /GW_Python && \
     cd /GW_Python && \
     wget https://github.com/python/cpython/archive/refs/tags/v3.8.10.tar.gz && \
@@ -37,15 +41,14 @@ RUN apt-get update && apt-get install -y \
     /GW_Python/bin/pip3 --no-cache-dir install dill && \
     chmod -R 777 /GW_Python
 
-RUN apt-get update && \
-    apt install r-base r-base-dev -y && \
+RUN apt-get update && apt-get install -y r-base r-base-dev && \
     if [ "${GH_PAT}" != 'NOT_SET' ]; then \
         echo 'Setting GH_PAT'; \
         export GITHUB_PAT="${GITHUB_TOKEN}"; \
     fi && \
     Rscript -e "install.packages('Matrix', repos='http://cran.us.r-project.org')" && \
     Rscript -e "install.packages(c('devtools', 'Seurat', 'SeuratObject', 'data.table', 'jsonlite', 'readr', 'BiocManager'))" && \
-    Rscript -e "BiocManager::install('DropletUtils', ask = F, upgrade = 'always')" && \
+    Rscript -e "BiocManager::install('DropletUtils', ask = FALSE, upgrade = 'always')" && \
     Rscript -e "devtools::install_github(repo = 'bimberlab/RIRA', ref = 'master', dependencies = TRUE, upgrade = 'always')" && \
     R CMD build . && \
     R CMD INSTALL --build *.tar.gz && \
