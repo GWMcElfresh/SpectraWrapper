@@ -1,6 +1,8 @@
 Package: SpectraWrapper
 Title: R wrapper around Spectra
 Version: 0.0.0.9000
+Author: Bimber lab
+Maintainer: The package maintainer <mcelfreg@ohsu.edu>
 Description: This package hosts a docker image to run the Spectra software
     for single cell RNASeq signature discovery.
 License: GPL (>= 3)
@@ -11,8 +13,18 @@ Depends:
     R (>= 4.3.0)
 Imports:
     Seurat,
-    SeuratObject,
-    data.table
+    data.table, 
+    jsonlite,
+    readr,
+    DropletUtils, 
+    ggplot2, 
+    reticulate, 
+    RIRA,
+    dplyr,
+    R.utils
+Suggests:
+    devtools
+Remotes:
+    bimberlab/RIRA
 Collate: 
     'SpectraWrapper.R'
-VignetteBuilder: knitr

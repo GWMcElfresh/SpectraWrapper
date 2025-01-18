@@ -7,8 +7,10 @@ ADD . /SpectraWrapper
 
 RUN apt-get update && apt-get install -y \
     build-essential \
+    libcurl4-openssl-dev \
     libssl-dev \
     uuid-dev \
+    libxml2-dev \
     libgpgme11-dev \
     squashfs-tools \
     libseccomp-dev \
@@ -19,7 +21,14 @@ RUN apt-get update && apt-get install -y \
     libbz2-dev \
     zlib1g-dev \
     python3-dev \
-    libffi-dev && \
+    libffi-dev \
+    libfontconfig1-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libtiff5-dev \
+    libjpeg-dev && \
     mkdir /GW_Python && \
     cd /GW_Python && \
     wget https://github.com/python/cpython/archive/refs/tags/v3.8.10.tar.gz && \
@@ -34,7 +43,9 @@ RUN apt-get update && apt-get install -y \
     /GW_Python/bin/pip3 --no-cache-dir install dill && \
     chmod -R 777 /GW_Python
 
+
 #install R and dependencies
+
 RUN apt-get update && apt-get install -y r-base r-base-dev && \
     if [ "${GH_PAT}" != 'NOT_SET' ]; then \
         echo 'Setting GH_PAT'; \
@@ -63,8 +74,6 @@ RUN cd /SpectraWrapper && \
     R CMD build . && \
 	  R CMD INSTALL --build *.tar.gz && \
 	  rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
-
-
 
 ENV NUMBA_CACHE_DIR=/work/numba_cache
 ENV MPLCONFIGDIR=/work/mpl_cache
