@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     squashfs-tools \
     libseccomp-dev \
     libsqlite3-dev \
+    libfontconfig1-dev \
     pkg-config \
     git-all \
     wget \
@@ -33,14 +34,16 @@ RUN apt-get update && apt-get install -y \
     /GW_Python/bin/pip3 --no-cache-dir install scSpectra && \
     /GW_Python/bin/pip3 --no-cache-dir install dill && \
     chmod -R 777 /GW_Python
-    
-RUN apt install r-base r-base-dev -y && \
+
+RUN apt-get update && \
+    apt install r-base r-base-dev -y && \
     if [ "${GH_PAT}" != 'NOT_SET' ]; then \
         echo 'Setting GH_PAT'; \
         export GITHUB_PAT="${GITHUB_TOKEN}"; \
     fi && \
+    Rscript -e "install.packages('Matrix', repos='http://cran.us.r-project.org')" && \
     Rscript -e "install.packages(c('devtools', 'Seurat', 'SeuratObject', 'data.table', 'jsonlite', 'readr', 'BiocManager'))" && \
-    Rscript -e "BiocManager::install('DropletUtils')" && \
+    Rscript -e "BiocManager::install('DropletUtils', ask = F, upgrade = 'always')" && \
     Rscript -e "devtools::install_github(repo = 'bimberlab/RIRA', ref = 'master', dependencies = TRUE, upgrade = 'always')" && \
     R CMD build . && \
     R CMD INSTALL --build *.tar.gz && \
