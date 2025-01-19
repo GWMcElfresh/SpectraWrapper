@@ -76,7 +76,6 @@ SeuratToAnnData <- function(seuratObj,
   utils::write.table(Seurat::VariableFeatures(seuratObj),
                      R.utils::getAbsolutePath(paste0(seuratToAnnDataDir, "/varfeats.csv"),
                                               mustWork = FALSE), row.names = FALSE, col.names = FALSE)
-
   DropletUtils::write10xCounts(x = Seurat::GetAssayData(seuratObj, assay = assayName, slot = 'data'),
                                path = R.utils::getAbsolutePath(paste0(seuratToAnnDataDir, "/GEX.h5"), mustWork = FALSE),
                                overwrite = TRUE)
