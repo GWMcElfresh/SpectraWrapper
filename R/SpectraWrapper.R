@@ -18,7 +18,11 @@ utils::globalVariables(
 #' @importFrom jsonlite read_json write_json
 #' @export
 
-RunSpectra <- function(seuratObj, seuratToAnnDataDir, assayName, inputJSONfile, immportfile){
+RunSpectra <- function(seuratObj,
+                       seuratToAnnDataDir = "./SpectraOutput",
+                       assayName = "RNA",
+                       inputJSONfile,
+                       immportfile){
 
   SeuratToAnnData(seuratObj, seuratToAnnDataDir, assayName)
   gex_datafile = paste0(seuratToAnnDataDir, "/GEX.h5")
@@ -63,7 +67,7 @@ RunSpectra <- function(seuratObj, seuratToAnnDataDir, assayName, inputJSONfile, 
 #' @importFrom utils write.table
 #' @export
 SeuratToAnnData <- function(seuratObj,
-                            seuratToAnnDataDir,
+                            seuratToAnnDataDir = "./SpectraOutput",
                             assayName = 'RNA') {
   if (!dir.exists(seuratToAnnDataDir)) {
     dir.create(seuratToAnnDataDir, recursive = T)
@@ -91,7 +95,9 @@ SeuratToAnnData <- function(seuratObj,
 #' @importFrom RIRA ListGeneSets GetGeneSet
 #' @export
 
-ProduceGenesetJSONfile <- function(spectraDefaultGeneSets, immportGeneSetsPath, outputpath){
+ProduceGenesetJSONfile <- function(spectraDefaultGeneSets,
+                                   immportGeneSetsPath,
+                                   outputpath){
   # read in gene sets
   jsonin <- jsonlite::read_json(spectraDefaultGeneSets, simplifyVector = TRUE)
   immport <- readRDS(immportGeneSetsPath)
