@@ -51,9 +51,8 @@ RUN apt-get update && apt-get install -y r-base r-base-dev && \
         echo 'Setting GH_PAT'; \
         export GITHUB_PAT="${GITHUB_TOKEN}"; \
     fi && \
-    Rscript -e "install.packages('Matrix', repos='http://cran.us.r-project.org', version='1.6.4')" && \
-    Rscript -e "install.packages(c('devtools', 'remotes', 'Seurat', 'SeuratObject', 'data.table', 'jsonlite', 'readr', 'BiocManager'))" && \
-    Rscript -e "BiocManager::install('DropletUtils', ask = FALSE, upgrade = 'always')"
+    Rscript -e "install.packages(c('remotes', 'devtools', 'BiocManager', 'pryr', 'rmdformats', 'knitr', 'logger', 'Matrix'), dependencies=TRUE, ask = FALSE, upgrade = 'always')" && \
+    echo "local({options(repos = BiocManager::repositories())})" >> ~/.Rprofile
 
 #installing RIRA using remotes/devtools install_github() was giving me a
 #"malformed DESCRIPTION" error on the encoding line of DESCRIPTION.
