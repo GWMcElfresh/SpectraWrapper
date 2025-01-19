@@ -64,6 +64,8 @@ RUN cd / && \
     git clone https://github.com/BimberLab/RIRA.git && \
     cd /RIRA && \
     R CMD build . && \
+    Rscript -e "BiocManager::install(ask = F, upgrade = 'always');" && \
+    Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" \
     #TODO: remove ls once I have a handle on base file structure in /RIRA
     ls && \
     R CMD INSTALL --build *.tar.gz && \
@@ -72,6 +74,8 @@ RUN cd / && \
 #build SpectraWrapper
 RUN cd /SpectraWrapper && \
     R CMD build . && \
+    Rscript -e "BiocManager::install(ask = F, upgrade = 'always');" && \
+    Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" && \
 	  R CMD INSTALL --build *.tar.gz && \
 	  rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
 
