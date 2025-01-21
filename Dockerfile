@@ -49,7 +49,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y r-base r-base-dev && \
     if [ "${GH_PAT}" != 'NOT_SET' ]; then \
         echo 'Setting GH_PAT'; \
-        export GITHUB_PAT="${GITHUB_TOKEN}"; \
+        export GITHUB_PAT="${GH_PAT}"; \
     fi && \
     Rscript -e "install.packages(c('remotes', 'devtools', 'BiocManager', 'pryr', 'rmdformats', 'knitr', 'logger', 'Matrix'), dependencies=TRUE, ask = FALSE, upgrade = 'always')" && \
     echo "local({options(repos = BiocManager::repositories())})" >> ~/.Rprofile
@@ -68,15 +68,15 @@ RUN cd / && \
     #TODO: remove ls once I have a handle on base file structure in /RIRA
     ls && \
     R CMD INSTALL --build *.tar.gz && \
-	  rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
+    rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
 
 #build SpectraWrapper
 RUN cd /SpectraWrapper && \
     R CMD build . && \
     Rscript -e "BiocManager::install(ask = F, upgrade = 'always');" && \
     Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" && \
-	  R CMD INSTALL --build *.tar.gz && \
-	  rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
+    R CMD INSTALL --build *.tar.gz && \
+    rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
 
 ENV NUMBA_CACHE_DIR=/work/numba_cache
 ENV MPLCONFIGDIR=/work/mpl_cache
