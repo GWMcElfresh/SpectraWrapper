@@ -7,10 +7,8 @@ ADD . /SpectraWrapper
 
 RUN apt-get update && apt-get install -y \
     build-essential \
-    g++-10 \
+    g++ \
     libpthread-stubs0-dev \
-    libgcc-10-dev \
-    libstdc++-10-dev \
     libcurl4-openssl-dev \
     libssl-dev \
     uuid-dev \
@@ -73,7 +71,7 @@ RUN cd / && \
     R CMD build . && \
     #TODO: remove ls once I have a handle on base file structure in /RIRA
     ls && \
-    R CMD INSTALL --build *.tar.gz && \
+    R CMD INSTALL --build /RIRA/*.tar.gz && \
     rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
 
 #build SpectraWrapper
