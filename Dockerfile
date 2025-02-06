@@ -7,6 +7,8 @@ ADD . /SpectraWrapper
 
 RUN apt-get update && apt-get install -y \
     build-essential \
+    g++ \
+    libpthread-stubs0-dev \
     libcurl4-openssl-dev \
     libssl-dev \
     uuid-dev \
