@@ -54,7 +54,7 @@ RUN apt-get update && apt-get install -y r-base r-base-dev && \
         echo 'Setting GH_PAT'; \
         export GITHUB_PAT="${GH_PAT}"; \
     fi && \
-    Rscript -e "install.packages(c('remotes', 'devtools', 'BiocManager', 'pryr', 'rmdformats', 'knitr', 'logger', 'Matrix', 'dplyr', 'data.table'), dependencies=TRUE, ask = FALSE, upgrade = 'always')" && \
+    Rscript -e "install.packages(c('remotes', 'devtools', 'BiocManager', 'pryr', 'rmdformats', 'knitr', 'logger', 'Matrix', 'dplyr', 'data.table', 'stringr'), dependencies=TRUE, ask = FALSE, upgrade = 'always')" && \
     echo "local({options(repos = BiocManager::repositories())})" >> ~/.Rprofile && \
     Rscript -e "BiocManager::install('Rsamtools')"
 
@@ -66,9 +66,9 @@ RUN apt-get update && apt-get install -y r-base r-base-dev && \
 RUN cd / && \
     git clone https://github.com/BimberLab/RIRA.git && \
     cd /RIRA && \
-    R CMD build . && \
     Rscript -e "BiocManager::install(ask = F, upgrade = 'always');" && \
     Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" \
+    R CMD build . && \
     #TODO: remove ls once I have a handle on base file structure in /RIRA
     ls && \
     R CMD INSTALL --build *.tar.gz && \
@@ -76,9 +76,9 @@ RUN cd / && \
 
 #build SpectraWrapper
 RUN cd /SpectraWrapper && \
-    R CMD build . && \
     Rscript -e "BiocManager::install(ask = F, upgrade = 'always');" && \
-    Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" && \
+    Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" \
+    R CMD build . && \
     R CMD INSTALL --build *.tar.gz && \
     rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
 
