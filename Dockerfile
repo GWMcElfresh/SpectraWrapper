@@ -64,7 +64,7 @@ RUN Rscript -e "devtools::install_github('BimberLab/RIRA', dependencies = TRUE, 
 #build SpectraWrapper
 RUN cd /SpectraWrapper && \
     Rscript -e "BiocManager::install(ask = F, upgrade = 'always');" && \
-    Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" \
+    Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" && \
     R CMD build . && \
     R CMD INSTALL --build *.tar.gz && \
     rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
