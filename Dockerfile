@@ -58,21 +58,8 @@ RUN apt-get update && apt-get install -y r-base r-base-dev && \
     echo "local({options(repos = BiocManager::repositories())})" >> ~/.Rprofile && \
     Rscript -e "BiocManager::install('Rsamtools')"
 
-#installing RIRA using remotes/devtools install_github() was giving me a
-#"malformed DESCRIPTION" error on the encoding line of DESCRIPTION.
-#makes very little sense to me as to why (the characters are fine/UTF-8).
-#trying to build from source through git instead.
-
-RUN cd / && \
-    git clone https://github.com/BimberLab/RIRA.git && \
-    cd /RIRA && \
-    Rscript -e "BiocManager::install(ask = F, upgrade = 'always');" && \
-    Rscript -e "devtools::install_deps(pkg = '.', dependencies = TRUE, upgrade = 'always');" \
-    R CMD build . && \
-    #TODO: remove ls once I have a handle on base file structure in /RIRA
-    ls && \
-    R CMD INSTALL --build /RIRA/*.tar.gz && \
-    rm -Rf /tmp/downloaded_packages/ /tmp/*.rds
+RUN Rscript -e "devtools::install_github('BimberLab/RIRA', dependencies = TRUE, upgrade = 'always')"
+    
 
 #build SpectraWrapper
 RUN cd /SpectraWrapper && \
