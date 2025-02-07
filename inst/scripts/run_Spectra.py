@@ -16,7 +16,7 @@ from Spectra import Spectra_util as spc_tl
 from Spectra import K_est as kst
 from Spectra import default_gene_sets
 
-def run_Spectra(features_file, metadata_file, gex_datafile, genesets_json, seuratToAdataDir, print_versions = True):
+def run_Spectra(features_file, metadata_file, gex_datafile, genesets_json, seuratToAnnDataDir, print_versions = True):
 
     if print_versions:
         print('scanpy version: ' + sc.__version__)
@@ -71,19 +71,19 @@ def run_Spectra(features_file, metadata_file, gex_datafile, genesets_json, seura
     num_epochs=2 #here running only 2 epochs for time reasons, we recommend 10,000 epochs for most datasets
     )
     
-    adataObj.uns['SPECTRA_overlap'].to_csv(os.path.join(seuratToAdataDir,"SPECTRA_overlap.csv"))
+    adataObj.uns['SPECTRA_overlap'].to_csv(os.path.join(seuratToAnnDataDir,"SPECTRA_overlap.csv"))
     
     index_labels = adataObj.uns['SPECTRA_overlap'].index
     gene_weights = pd.DataFrame(adataObj.uns['SPECTRA_factors'],
     index= index_labels,columns=adataObj.var[adataObj.var['spectra_vocab']].index)
-    gene_weights.to_csv(os.path.join(seuratToAdataDir, "geneweights.csv"))
+    gene_weights.to_csv(os.path.join(seuratToAnnDataDir, "geneweights.csv"))
     
-    pd.DataFrame(adataObj.uns['SPECTRA_markers'], index= index_labels).to_csv(os.path.join(seuratToAdataDir, "SPECTRA_markers.csv"))
+    pd.DataFrame(adataObj.uns['SPECTRA_markers'], index= index_labels).to_csv(os.path.join(seuratToAnnDataDir, "SPECTRA_markers.csv"))
     
-    with open(os.path.join(seuratToAdataDir,"SPECTRA_L.json"), "w") as fp:
+    with open(os.path.join(seuratToAnnDataDir,"SPECTRA_L.json"), "w") as fp:
       json.dump(adataObj.uns['SPECTRA_L'] , fp)
     
-    pd.DataFrame(adataObj.obsm['SPECTRA_cell_scores'], columns=index_labels, index = adataObj.obs.index).to_csv(os.path.join(seuratToAdataDir, "SPECTRA_cell_scores.csv"))
+    pd.DataFrame(adataObj.obsm['SPECTRA_cell_scores'], columns=index_labels, index = adataObj.obs.index).to_csv(os.path.join(seuratToAnnDataDir, "SPECTRA_cell_scores.csv"))
     
     
     

@@ -2,7 +2,7 @@
 
 export(ProduceGenesetJSONfile)
 export(RunSpectra)
-export(SeuratToAData)
+export(SeuratToAnnData)
 export(SpectraToSeuratMetadata)
 export(SpectraToSeuratReduction)
 importFrom(DropletUtils,write10xCounts)
