@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libpng-dev \
     libtiff5-dev \
+    libv8-dev \
     libjpeg-dev && \
     mkdir /GW_Python && \
     cd /GW_Python && \
