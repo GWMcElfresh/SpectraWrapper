@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libtiff5-dev \
     libv8-dev \
+    cmake \
     libjpeg-dev && \
     mkdir /GW_Python && \
     cd /GW_Python && \
