@@ -35,7 +35,6 @@ RUN apt-get update && apt-get install -y \
     libmagick++-dev \
     libmariadb-dev \
     libpq-dev \
-    libmariadb-client-lgpl-dev \
     cargo \
     cmake \
     libjpeg-dev && \
