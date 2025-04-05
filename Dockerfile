@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y \
     libv8-dev \
     libgit2-dev \
     libmagick++-dev \
-    libmariadbclient-dev \
+    libmariadb-dev \
     libpq-dev \
     libmariadb-client-lgpl-dev \
     cargo \
