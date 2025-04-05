@@ -31,6 +31,12 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libtiff5-dev \
     libv8-dev \
+    libgit2-dev \
+    libmagick++-dev \
+    libmariadbclient-dev \
+    libpq-dev \
+    libmariadb-client-lgpl-dev \
+    cargo \
     cmake \
     libjpeg-dev && \
     mkdir /GW_Python && \
