@@ -63,9 +63,10 @@ RUN apt-get update && apt-get install -y r-base r-base-dev && \
     fi && \
     Rscript -e "install.packages(c('remotes', 'devtools', 'BiocManager', 'pryr', 'rmdformats', 'knitr', 'logger', 'Matrix', 'dplyr', 'data.table', 'stringr', 'naturalsort'), dependencies=TRUE, ask = FALSE, upgrade = 'always')" && \
     echo "local({options(repos = BiocManager::repositories())})" >> ~/.Rprofile && \
-    Rscript -e "BiocManager::install(c('Rsamtools', 'mixOmics'))"
+    Rscript -e "BiocManager::install(c('Rsamtools'))"
 
 RUN Rscript -e "devtools::install_github('BimberLab/RIRA', dependencies = TRUE, upgrade = 'always')"
+RUN Rscript -e "devtools::install_github('mixOmicsTeam/mixOmics', dependencies = TRUE, upgrade = 'always')"
     
 
 #build SpectraWrapper
