@@ -4,12 +4,18 @@
 \alias{RunSpectra}
 \title{RunSpectra}
 \usage{
-RunSpectra(seuratObj, seuratToAdataDir, assayName, inputJSONfile, immportfile)
+RunSpectra(
+  seuratObj,
+  seuratToAnnDataDir,
+  assayName,
+  inputJSONfile,
+  immportfile
+)
 }
 \arguments{
 \item{seuratObj}{Input Seurat object}
 
-\item{seuratToAdataDir}{Directory to house files used in generating Ann Data}
+\item{seuratToAnnDataDir}{Directory to house files used in generating Ann Data}
 
 \item{assayName}{Assay used for generating Ann Data}
 

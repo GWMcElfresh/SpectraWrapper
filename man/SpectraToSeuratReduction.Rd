@@ -6,7 +6,7 @@
 \usage{
 SpectraToSeuratReduction(
   seuratObj,
-  seuratToAdataDir,
+  seuratToAnnDataDir,
   assayName = "RNA",
   reduction.name = "spectra",
   reduction.key = "Spectra_"
@@ -15,7 +15,7 @@ SpectraToSeuratReduction(
 \arguments{
 \item{seuratObj}{The Seurat object to which to add the Spectra results.}
 
-\item{seuratToAdataDir}{Intermediate directory containing the Spectra results.}
+\item{seuratToAnnDataDir}{Intermediate directory containing the Spectra results.}
 
 \item{assayName}{The name of the gene expression data assay.}
 
